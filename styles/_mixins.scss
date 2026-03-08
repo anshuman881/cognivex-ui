@@ -1,0 +1,151 @@
+// SASS Mixins for the dashboard
+
+@use 'themes/variables' as *;
+
+// Responsive breakpoints
+@mixin sm {
+  @media (min-width: $breakpoint-sm) {
+    @content;
+  }
+}
+
+@mixin md {
+  @media (min-width: $breakpoint-md) {
+    @content;
+  }
+}
+
+@mixin lg {
+  @media (min-width: $breakpoint-lg) {
+    @content;
+  }
+}
+
+@mixin xl {
+  @media (min-width: $breakpoint-xl) {
+    @content;
+  }
+}
+
+@mixin xxl {
+  @media (min-width: $breakpoint-2xl) {
+    @content;
+  }
+}
+
+// Flexbox utilities
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@mixin flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+// Card styling
+@mixin card {
+  background: var(--bg-card);
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-card);
+  transition: box-shadow $transition-normal, transform $transition-normal;
+  
+  &:hover {
+    box-shadow: var(--shadow-card-hover);
+    transform: translateY(-2px);
+  }
+}
+
+// Glass effect
+@mixin glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+}
+
+// Gradient text
+@mixin gradient-text {
+  background: var(--accent-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+// Status indicator
+@mixin status-dot($color) {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: $color;
+  
+  &.pulse {
+    animation: pulse 2s infinite;
+  }
+}
+
+// Animation keyframes
+@mixin keyframes($name) {
+  @keyframes #{$name} {
+    @content;
+  }
+}
+
+// Focus styles
+@mixin focus-ring {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba($brand-primary, 0.3);
+}
+
+// Scrollbar styling
+@mixin custom-scrollbar {
+  &::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: var(--bg-secondary);
+    border-radius: 4px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 4px;
+    
+    &:hover {
+      background: var(--text-muted);
+    }
+  }
+}
+
+// Truncate text
+@mixin truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// Memory bar
+@mixin memory-bar {
+  height: 8px;
+  background: var(--bg-tertiary);
+  border-radius: $radius-sm;
+  overflow: hidden;
+  
+  .fill {
+    height: 100%;
+    border-radius: $radius-sm;
+    transition: width $transition-slow;
+  }
+}

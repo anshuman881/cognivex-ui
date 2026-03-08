@@ -1,0 +1,44 @@
+// Dark theme - Deep blue-black (Dynatrace-inspired)
+
+@use 'variables' as *;
+
+// Dark theme definition using CSS custom properties
+[data-theme='dark'] {
+  // Backgrounds
+  --bg-primary: #{$dark-bg-primary};
+  --bg-secondary: #{$dark-bg-secondary};
+  --bg-tertiary: #{$dark-bg-tertiary};
+  --bg-card: #{$dark-bg-card};
+  
+  // Text
+  --text-primary: #{$dark-text-primary};
+  --text-secondary: #{$dark-text-secondary};
+  --text-muted: #{$dark-text-muted};
+  
+  // Borders
+  --border-color: #{$dark-border};
+  --border-subtle: rgba(255, 255, 255, 0.05);
+  
+  // Accent colors
+  --accent-primary: #{$brand-primary};
+  --accent-secondary: #{$brand-secondary};
+  --accent-gradient: linear-gradient(90deg, #{$brand-primary}, #{$brand-secondary});
+  
+  // Status
+  --status-success: #{$status-success};
+  --status-warning: #{$status-warning};
+  --status-error: #{$status-error};
+  --status-info: #{$status-info};
+  
+  // Shadows
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.2);
+  --shadow-card-hover: 0 4px 6px rgba(0, 0, 0, 0.4), 0 2px 4px rgba(0, 0, 0, 0.3);
+  
+  // Glass effect
+  --glass-bg: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  
+  // Gradient backgrounds
+  --gradient-bg: linear-gradient(135deg, #{$dark-bg-primary} 0%, #{$dark-bg-secondary} 100%);
+  --gradient-card: linear-gradient(180deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.08) 100%);
+}

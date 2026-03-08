@@ -1,0 +1,282 @@
+// Main SCSS entry point for Cognivex Metrics Dashboard
+@use 'themes/variables' as *;
+@use 'themes/light';
+@use 'themes/dark';
+@use 'mixins' as *;
+
+// CSS Custom Properties export (Sass variables to CSS vars)
+:root {
+  // Default to dark theme
+  --bg-primary: #{$dark-bg-primary};
+  --bg-secondary: #{$dark-bg-secondary};
+  --bg-tertiary: #{$dark-bg-tertiary};
+  --bg-card: #{$dark-bg-card};
+  --text-primary: #{$dark-text-primary};
+  --text-secondary: #{$dark-text-secondary};
+  --text-muted: #{$dark-text-muted};
+  --border-color: #{$dark-border};
+  --border-subtle: rgba(255, 255, 255, 0.05);
+  --accent-primary: #{$brand-primary};
+  --accent-secondary: #{$brand-secondary};
+  --accent-gradient: linear-gradient(90deg, #{$brand-primary}, #{$brand-secondary});
+  --status-success: #{$status-success};
+  --status-warning: #{$status-warning};
+  --status-error: #{$status-error};
+  --status-info: #{$status-info};
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.2);
+  --shadow-card-hover: 0 4px 6px rgba(0, 0, 0, 0.4), 0 2px 4px rgba(0, 0, 0, 0.3);
+  --glass-bg: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --gradient-bg: linear-gradient(135deg, #{$dark-bg-primary} 0%, #{$dark-bg-secondary} 100%);
+  --gradient-card: linear-gradient(180deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.08) 100%);
+}
+
+// Reset & Base styles
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: $font-family-sans;
+  background: var(--gradient-bg);
+  min-height: 100vh;
+  color: var(--text-primary);
+  line-height: 1.5;
+  transition: background-color $transition-normal, color $transition-normal;
+}
+
+// Typography
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+// Animations
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Utility classes
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: $spacing-lg;
+}
+
+.header {
+  text-align: center;
+  padding: $spacing-xl 0;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: $spacing-xl;
+  
+  h1 {
+    font-size: $font-size-4xl;
+    @include gradient-text;
+    margin-bottom: $spacing-sm;
+  }
+}
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-sm $spacing-md;
+  border-radius: $radius-full;
+  font-size: $font-size-sm;
+  
+  &.connected {
+    background: rgba(0, 255, 136, 0.1);
+    color: var(--status-success);
+  }
+  
+  &.disconnected {
+    background: rgba(255, 68, 68, 0.1);
+    color: var(--status-error);
+  }
+  
+  .status-dot {
+    @include status-dot(currentColor);
+    
+    &.pulse {
+      animation: pulse 2s infinite;
+    }
+  }
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: $spacing-lg;
+  margin-bottom: $spacing-xl;
+}
+
+.card {
+  @include card;
+  
+  .card-header {
+    @include flex-between;
+    margin-bottom: $spacing-lg;
+    
+    .card-title {
+      font-size: $font-size-lg;
+      font-weight: 600;
+      color: var(--accent-primary);
+    }
+  }
+}
+
+.metric {
+  @include flex-between;
+  padding: $spacing-md 0;
+  border-bottom: 1px solid var(--border-subtle);
+  
+  &:last-child {
+    border-bottom: none;
+  }
+  
+  .metric-label {
+    color: var(--text-muted);
+    font-size: $font-size-sm;
+  }
+  
+  .metric-value {
+    font-weight: 600;
+    font-family: $font-family-mono;
+  }
+}
+
+.memory-bar {
+  @include memory-bar;
+  
+  .fill.heap {
+    background: var(--accent-gradient);
+  }
+}
+
+.thread-count {
+  font-size: $font-size-3xl;
+  font-weight: 700;
+  text-align: center;
+  color: var(--accent-secondary);
+}
+
+.thread-label {
+  text-align: center;
+  color: var(--text-muted);
+  margin-top: $spacing-sm;
+}
+
+.uptime {
+  font-family: $font-family-mono;
+  font-size: $font-size-2xl;
+  color: var(--status-warning);
+}
+
+.timestamp {
+  color: var(--text-muted);
+  font-size: $font-size-sm;
+  margin-top: $spacing-sm;
+}
+
+.loading {
+  @include flex-center;
+  flex-direction: column;
+  padding: $spacing-2xl;
+  color: var(--text-muted);
+  
+  .spinner {
+    width: 50px;
+    height: 50px;
+    border: 3px solid rgba(0, 217, 255, 0.1);
+    border-top-color: var(--accent-primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: $spacing-lg;
+  }
+}
+
+// Theme toggle
+.theme-toggle {
+  @include flex-center;
+  width: 44px;
+  height: 44px;
+  border-radius: $radius-full;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  cursor: pointer;
+  transition: all $transition-fast;
+  color: var(--text-primary);
+  font-size: $font-size-lg;
+  
+  &:hover {
+    background: var(--bg-tertiary);
+    transform: scale(1.05);
+  }
+  
+  &:focus {
+    @include focus-ring;
+  }
+}
+
+// Button base
+.btn {
+  @include flex-center;
+  padding: $spacing-sm $spacing-md;
+  border-radius: $radius-md;
+  font-size: $font-size-sm;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all $transition-fast;
+  border: none;
+  
+  &.btn-primary {
+    background: var(--accent-gradient);
+    color: #000;
+    
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 217, 255, 0.3);
+    }
+  }
+  
+  &.btn-secondary {
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    
+    &:hover {
+      background: var(--border-color);
+    }
+  }
+}
