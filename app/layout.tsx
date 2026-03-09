@@ -13,11 +13,6 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "Cognivex Metrics Dashboard",
-  description: "Real-time JVM metrics dashboard with black and white theme",
-};
-
 export default function RootLayout({
   children,
 }: Readonly<{
