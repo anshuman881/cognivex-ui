@@ -7,8 +7,8 @@ import { usePathname } from 'next/navigation';
 // Icons as SVG components
 const DashboardIcon = ({ className }: { className?: string }) => (
   <svg className={className} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <rect x="3" y="3" width="7" height="9" />
-    " rx="1<rect x="14" y="3" width="7" height="5" rx="1" />
+    <rect x="3" y="3" width="7" height="9" rx="1" />
+    <rect x="14" y="3" width="7" height="5" rx="1" />
     <rect x="14" y="12" width="7" height="9" rx="1" />
     <rect x="3" y="16" width="7" height="5" rx="1" />
   </svg>
@@ -354,7 +354,6 @@ function GcDetails({ gc }: { gc: MetricsData['gc'] }) {
   
   const gcArray = Object.values(gc);
   const totalCollections = gcArray.reduce((sum, g) => sum + g.count, 0);
-  const totalTime = gcArray.reduce((sum, g) => sum + g.time, 0);
   
   return (
     <div className="detail-card">
@@ -369,7 +368,7 @@ function GcDetails({ gc }: { gc: MetricsData['gc'] }) {
         </div>
         <div className="detail-metric">
           <span className="detail-label">Total Time</span>
-          <span className="detail-value">{formatUptime(totalTime)}</span>
+          <span className="detail-value">{formatUptime(gcArray.reduce((sum, g) => sum + g.time, 0))}</span>
         </div>
       </div>
       <div className="gc-list">
@@ -391,7 +390,9 @@ export default function MetricsDashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [currentTime, setCurrentTime] = useState(new Date());
   const wsRef = useRef<WebSocket | null>(null);
+  const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const pathname = usePathname();
+  const connectFnRef = useRef<() => void>(() => {});
 
   // Update time every second
   useEffect(() => {
@@ -399,6 +400,7 @@ export default function MetricsDashboard() {
     return () => clearInterval(timer);
   }, []);
 
+  // WebSocket setup
   const connectWebSocket = useCallback(() => {
     console.log('Connecting to:', WS_URL);
 
@@ -426,13 +428,22 @@ export default function MetricsDashboard() {
     ws.onclose = () => {
       console.log('WebSocket disconnected');
       setConnected(false);
-      setTimeout(() => {
-        if (!wsRef.current || wsRef.current.readyState === WebSocket.CLOSED) {
-          connectWebSocket();
-        }
-      }, 3000);
+      // Schedule reconnection
+      if (!reconnectTimeoutRef.current) {
+        reconnectTimeoutRef.current = setTimeout(() => {
+          reconnectTimeoutRef.current = null;
+          if (!wsRef.current || wsRef.current.readyState === WebSocket.CLOSED) {
+            connectFnRef.current();
+          }
+        }, 3000);
+      }
     };
   }, []);
+
+  // Store the function in ref for recursive calls
+  useEffect(() => {
+    connectFnRef.current = connectWebSocket;
+  }, [connectWebSocket]);
 
   useEffect(() => {
     connectWebSocket();
@@ -448,6 +459,7 @@ export default function MetricsDashboard() {
   const heapPercent = metrics?.memory ? (metrics.memory.heapUsed / metrics.memory.heapMax * 100) : 0;
   const memoryColor = getStatusColor(heapPercent);
 
+  // Loading state
   if (!metrics) {
     return (
       <div className="dashboard-loading">
@@ -501,13 +513,23 @@ export default function MetricsDashboard() {
         </div>
       </aside>
 
+      {/* Mobile overlay */}
+      {sidebarOpen && (
+        <div className="sidebar-overlay" onClick={() => setSidebarOpen(false)}></div>
+      )}
+
       {/* Main Content */}
-      <main className="main-content">
+      <main className={`main-content ${sidebarOpen ? 'sidebar-open' : ''}`}>
         {/* Top Header */}
         <header className="top-header">
           <div className="header-left">
-            <h1>Application Overview</h1>
-            <span className="header-subtitle">Real-time JVM metrics monitoring</span>
+            <button className="mobile-menu-btn" onClick={() => setSidebarOpen(!sidebarOpen)}>
+              <MenuIcon />
+            </button>
+            <div>
+              <h1>Application Overview</h1>
+              <span className="header-subtitle">Real-time JVM metrics monitoring</span>
+            </div>
           </div>
           
           <div className="header-center">
