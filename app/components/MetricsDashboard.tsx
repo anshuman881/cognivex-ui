@@ -387,12 +387,29 @@ function GcDetails({ gc }: { gc: MetricsData['gc'] }) {
 export default function MetricsDashboard() {
   const [metrics, setMetrics] = useState<MetricsData | null>(null);
   const [connected, setConnected] = useState(false);
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
   const wsRef = useRef<WebSocket | null>(null);
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const pathname = usePathname();
   const connectFnRef = useRef<() => void>(() => {});
+
+  // Auto-open sidebar on desktop
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 1024) {
+        setSidebarOpen(true);
+      } else {
+        setSidebarOpen(false);
+      }
+    };
+    
+    // Set initial state
+    handleResize();
+    
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Update time every second
   useEffect(() => {
